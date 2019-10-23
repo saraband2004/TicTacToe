@@ -71,12 +71,17 @@ class ViewController: UIViewController {
     
     func machineplay(){
         var y = Int.random(in: 0...8)
-        while (matrix[y] != 0){
-            y = Int.random(in: 0...8)
+        if (count <= 0) {
+            while (matrix[y] != 0) {
+                y = Int.random(in: 0...8)
+            }
+            execute(x: y)
         }
-        execute(x: y)
-        
-        
+        else {
+
+            execute(x : cpuStrategy())
+
+        }
         
         
     }
@@ -142,8 +147,111 @@ class ViewController: UIViewController {
         
         return 0;
     }
-    
-    
+
+
+
+
+
+
+
+func cpuStrategy()->Int {
+    for i in 0...8 {
+        if (matrix[i] == 0) {
+        if (cpuPlayNext(x:i) == 1) {
+            return i;
+            }
+        }
+    }
+    for i in 0...8 {
+    if (matrix[i] == 0) {
+        if (cpuPlayNext(x: i) == 0) {
+            return i;
+            }
+        }
+    }
+    for i in 0...8 {
+    if (matrix[i] == 0) {
+        return i;
+        }
+    }
+return 99;
+}
+
+
+func cpuPlayNext(x: Int)->Int {
+    matrix[x] = 1;
+    var result = 1;
+    var test = false;
+    var temp = 0
+    if (whowin() == 1) {
+        matrix[x] = 0;
+        return 1;}
+
+    else if (whowin() == 0) {
+        for i in 0...8 {
+            if (matrix[i] == 0) {
+                test = true;
+
+                temp = humanPlayNext(x:i);
+                result *= temp;
+                if (temp == -1) {
+                    matrix[x] = 0;
+                    return -1;
+                }
+            }
+        }
+    }
+    matrix[x] = 0;
+    if (!test) {return 0}
+    return result;
+    // 1 for cpu win always
+    // -1 for human win always
+    // 0 for cpu will never loose
+}
+func humanPlayNext(x: Int)-> Int {
+    matrix[x] = -1;
+    var result = -1;
+    var test = false;
+    var temp = 0
+    if (whowin() == -1) {
+        matrix[x] = 0;
+        return -1;}
+    else if (whowin() == 0) {
+        for i in 0...8 {
+            if (matrix[i] == 0) {
+                test = true;
+                temp = cpuPlayNext(x: i);
+                if (temp == 0) {result = 0;}
+                else if (temp == -1 && result == -1) {}
+                else if (temp == 1) {
+                    matrix[x] = 0;
+                    return 1;
+                }
+            }
+        }
+    }
+    matrix[x] = 0;
+    if (!test) {return 0;}
+    return result;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
     
     override func viewDidLoad() {
